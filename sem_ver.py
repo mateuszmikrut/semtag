@@ -2,7 +2,10 @@
 Semantic versioning module for parsing and incrementing version strings
 """
 
+import logging
 import re
+
+logger = logging.getLogger(__name__)
 
 
 class SemanticVersion:
@@ -15,9 +18,6 @@ class SemanticVersion:
     self.minor = 0
     self.patch = 0
     self.prerelease = ""
-    
-    self._parse(version_string)
-  
   def _parse(self, version_string: str):
     """Parse semantic version string"""
     # Remove 'v' prefix if present
@@ -33,6 +33,12 @@ class SemanticVersion:
       raise ValueError(f"Invalid semantic version format: {self.original}")
     
     self.major = int(match.group(1))
+    self.minor = int(match.group(2))
+    self.patch = int(match.group(3))
+    self.prerelease = match.group(4) or ""
+    
+    logger.debug(f"Parsed version: {self.major}.{self.minor}.{self.patch}" +
+                 (f"-{self.prerelease}" if self.prerelease else ""))
     self.minor = int(match.group(2))
     self.patch = int(match.group(3))
     self.prerelease = match.group(4) or ""

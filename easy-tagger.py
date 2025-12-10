@@ -4,10 +4,13 @@ Git Easy Tagger - A tool for managing semantic version tags in git repositories
 """
 
 import argparse
+import logging
 import sys
 
 import git_tags
 from sem_ver import SemanticVersion
+
+logger = logging.getLogger(__name__)
 
 
 def main():
@@ -20,7 +23,17 @@ Examples:
   %(prog)s -m        # Increment minor version (1.0.0 -> 1.1.0)
   %(prog)s -M        # Increment major version (1.0.0 -> 2.0.0)
   %(prog)s -p -u     # Increment patch and push to remote
+  %(prog)s -p -vvv   # Increment patch with debug logging
+  %(prog)s -p --dry-run  # Preview what would be done without making changes
         """
+  )
+  
+  # Verbosity argument
+  parser.add_argument(
+    '-v', '--verbose',
+    action='count',
+    default=0,
+    help='Increase verbosity (-v for INFO, -vv for DEBUG, -vvv for more detail)'
   )
   
   # Version increment arguments (mutually exclusive)
@@ -55,7 +68,30 @@ Examples:
     help='Pull from remote before creating tag'
   )
   
+  # Dry run argument
+  parser.add_argument(
+    '--dry-run',
+    action='store_true',
+    help='Show what would be done without actually creating or pushing tags'
+  )
+  
   args = parser.parse_args()
+  
+  # Configure logging based on verbosity
+  if args.verbose == 0:
+    log_level = logging.WARNING
+  elif args.verbose == 1:
+    log_level = logging.INFO
+  else:
+    log_level = logging.DEBUG
+  
+  logging.basicConfig(
+    level=log_level,
+    format='%(levelname)s: %(message)s'
+  )
+  
+  logger.debug(f"Verbosity level: {args.verbose}")
+  logger.debug(f"Arguments: {args}")
   
   # Step 1: Check if this is a git workspace
   repo = git_tags.check_git_workspace()
@@ -75,32 +111,41 @@ Examples:
   
   if latest_tag is None:
     # No tags found, start with 0.0.0
-    print("No semantic version tags found. Starting with 0.0.0")
+    logger.info("No semantic version tags found. Starting with 0.0.0")
     current_version = SemanticVersion("0.0.0")
   else:
     try:
       current_version = SemanticVersion(latest_tag)
     except ValueError as e:
-      print(f"Error parsing latest tag: {e}")
+      logger.error(f"Error parsing latest tag: {e}")
       sys.exit(1)
   
   # Step 5: Increment version based on argument
   if args.major:
+    logger.debug("Incrementing major version")
     current_version.increment_major()
   elif args.minor:
+    logger.debug("Incrementing minor version")
     current_version.increment_minor()
   elif args.patch:
+    logger.debug("Incrementing patch version")
     current_version.increment_patch()
   
   new_tag = str(current_version)
-  print(f"New version: {new_tag}")
-  new_tag = str(current_version)
-  print(f"New version: {new_tag}")
+  logger.info(f"New version: {new_tag}")
   
   # Step 6: Create tag and optionally push
-  if not git_tags.create_and_push_tag(repo, new_tag, push=args.push):
-    sys.exit(1)
+  if args.dry_run:
+    logger.info(f"DRY RUN: Would create tag: {new_tag}")
+    if args.push:
+      logger.info("DRY RUN: Would push tag to remote")
+    logger.info("DRY RUN: No changes made")
+  else:
+    if not git_tags.create_and_push_tag(repo, new_tag, push=args.push):
+      sys.exit(1)
   
-  print("Done!")
+  logger.info("Done!")
+
+
 if __name__ == "__main__":
   main()

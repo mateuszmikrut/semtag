@@ -37,6 +37,8 @@ python git_tagger.py [options]
 - `-M, --major` - Increment major version (MAJOR.0.0)
 - `-u, --push` - Push the new tag to remote repository
 - `--pull` - Pull from remote before creating tag
+- `-v, --verbose` - Increase verbosity (use -v, -vv, or -vvv for more detail)
+- `--dry-run` - Show what would be done without actually creating or pushing tags
 
 ### Examples
 
@@ -52,9 +54,21 @@ python git_tagger.py -M
 
 # Increment patch and push to remote
 python git_tagger.py -p -u
-
 # Pull before tagging and push
 python git_tagger.py -p --pull -u
+
+# With verbose output (INFO level)
+python git_tagger.py -p -v
+# With debug output (DEBUG level)
+python git_tagger.py -p -vvv
+
+# Dry run to preview changes without making them
+python git_tagger.py -p --dry-run
+
+# Dry run with push flag to see what would happen
+python git_tagger.py -p -u --dry-run
+```hon git_tagger.py -p -vvv
+```hon git_tagger.py -p --pull -u
 ```
 
 ## Supported Version Formats

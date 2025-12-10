@@ -2,6 +2,7 @@
 Git tag management module
 """
 
+import logging
 import sys
 from pathlib import Path
 from typing import Optional
@@ -14,17 +15,20 @@ except ImportError:
 
 from sem_ver import SemanticVersion
 
+logger = logging.getLogger(__name__)
+
 
 def check_git_workspace(repo_path: str = ".") -> Optional[git.Repo]:
   """Check if current directory is a git workspace and return repo"""
   try:
     repo = git.Repo(Path(repo_path).resolve(), search_parent_directories=True)
+    logger.debug(f"Found git repository at {repo.working_dir}")
     return repo
   except git.InvalidGitRepositoryError:
-    print(f"Error: '{repo_path}' is not a git repository")
+    logger.error(f"'{repo_path}' is not a git repository")
     return None
   except git.GitCommandError as e:
-    print(f"Error: Git command failed: {e}")
+    logger.error(f"Git command failed: {e}")
     return None
 
 
@@ -33,11 +37,12 @@ def check_main_branch(repo: git.Repo) -> bool:
   try:
     current_branch = repo.active_branch.name
     if current_branch not in ['main', 'master']:
-      print(f"Warning: You are on branch '{current_branch}', not on main/master")
+      logger.warning(f"You are on branch '{current_branch}', not on main/master")
       return False
+    logger.debug(f"On {current_branch} branch")
     return True
   except TypeError:
-    print("Warning: HEAD is detached, not on any branch")
+    logger.warning("HEAD is detached, not on any branch")
     return False
 
 
@@ -45,15 +50,15 @@ def pull_from_remote(repo: git.Repo) -> bool:
   """Pull latest changes from remote"""
   try:
     origin = repo.remote('origin')
-    print(f"Pulling from remote '{origin.name}'...")
+    logger.info(f"Pulling from remote '{origin.name}'...")
     origin.pull()
-    print("Successfully pulled latest changes")
+    logger.info("Successfully pulled latest changes")
     return True
   except git.GitCommandError as e:
-    print(f"Error pulling from remote: {e}")
+    logger.error(f"Error pulling from remote: {e}")
     return False
   except ValueError:
-    print("Warning: No remote named 'origin' found")
+    logger.warning("No remote named 'origin' found")
     return False
 
 
@@ -62,8 +67,10 @@ def get_latest_tag(repo: git.Repo) -> Optional[str]:
   try:
     tags = repo.tags
     if not tags:
-      print("No tags found in repository")
+      logger.info("No tags found in repository")
       return None
+    
+    logger.debug(f"Found {len(tags)} total tags")
     
     # Filter and sort semantic version tags
     semantic_tags = []
@@ -71,12 +78,14 @@ def get_latest_tag(repo: git.Repo) -> Optional[str]:
       try:
         version = SemanticVersion(tag.name)
         semantic_tags.append((tag.name, version))
+        logger.debug(f"Valid semantic version tag: {tag.name}")
       except ValueError:
         # Skip non-semantic version tags
+        logger.debug(f"Skipping non-semantic tag: {tag.name}")
         continue
     
     if not semantic_tags:
-      print("No semantic version tags found")
+      logger.info("No semantic version tags found")
       return None
     
     # Sort by major, minor, patch (ignoring prerelease for sorting)
@@ -86,11 +95,11 @@ def get_latest_tag(repo: git.Repo) -> Optional[str]:
     )
     
     latest_tag = semantic_tags[0][0]
-    print(f"Latest tag: {latest_tag}")
+    logger.info(f"Latest tag: {latest_tag}")
     return latest_tag
     
   except Exception as e:
-    print(f"Error getting tags: {e}")
+    logger.error(f"Error getting tags: {e}")
     return None
 
 
@@ -98,22 +107,24 @@ def create_and_push_tag(repo: git.Repo, new_tag: str, push: bool = False) -> boo
   """Create a new tag and optionally push it"""
   try:
     # Create the tag
-    print(f"Creating tag: {new_tag}")
+    logger.info(f"Creating tag: {new_tag}")
     repo.create_tag(new_tag, message=f"Release {new_tag}")
-    print(f"Successfully created tag: {new_tag}")
+    logger.info(f"Successfully created tag: {new_tag}")
     
     # Push if requested
     if push:
-      print(f"Pushing tag '{new_tag}' to remote...")
+      logger.info(f"Pushing tag '{new_tag}' to remote...")
       origin = repo.remote('origin')
       origin.push(new_tag)
-      print(f"Successfully pushed tag: {new_tag}")
+      logger.info(f"Successfully pushed tag: {new_tag}")
+    else:
+      logger.debug("Skipping push (not requested)")
     
     return True
     
   except git.GitCommandError as e:
-    print(f"Error creating/pushing tag: {e}")
+    logger.error(f"Error creating/pushing tag: {e}")
     return False
   except ValueError as e:
-    print(f"Error: {e}")
+    logger.error(f"Error: {e}")
     return False
