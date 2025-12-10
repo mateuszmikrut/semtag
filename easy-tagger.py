@@ -6,7 +6,7 @@ Git Easy Tagger - A tool for managing semantic version tags in git repositories
 import argparse
 import sys
 
-from git_tags import GitTagger
+import git_tags
 from sem_ver import SemanticVersion
 
 
@@ -57,23 +57,21 @@ Examples:
   
   args = parser.parse_args()
   
-  # Initialize tagger
-  tagger = GitTagger()
-  
   # Step 1: Check if this is a git workspace
-  if not tagger.check_git_workspace():
+  repo = git_tags.check_git_workspace()
+  if repo is None:
     sys.exit(1)
   
   # Step 2: Check if on main/master branch (warning only)
-  tagger.check_main_branch()
+  git_tags.check_main_branch(repo)
   
   # Step 3: Optionally pull from remote
   if args.pull:
-    if not tagger.pull_from_remote():
+    if not git_tags.pull_from_remote(repo):
       sys.exit(1)
   
   # Step 4: Get latest tag
-  latest_tag = tagger.get_latest_tag()
+  latest_tag = git_tags.get_latest_tag(repo)
   
   if latest_tag is None:
     # No tags found, start with 0.0.0
@@ -96,13 +94,13 @@ Examples:
   
   new_tag = str(current_version)
   print(f"New version: {new_tag}")
+  new_tag = str(current_version)
+  print(f"New version: {new_tag}")
   
   # Step 6: Create tag and optionally push
-  if not tagger.create_and_push_tag(new_tag, push=args.push):
+  if not git_tags.create_and_push_tag(repo, new_tag, push=args.push):
     sys.exit(1)
   
   print("Done!")
-
-
 if __name__ == "__main__":
   main()

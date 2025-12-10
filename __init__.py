@@ -6,6 +6,6 @@ __version__ = '0.1.0'
 __author__ = 'Your Name'
 
 from .sem_ver import SemanticVersion
-from .git_tags import GitTagger
+from . import git_tags
 
-__all__ = ['SemanticVersion', 'GitTagger']
+__all__ = ['SemanticVersion', 'git_tags']
