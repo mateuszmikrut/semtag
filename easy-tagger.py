@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Git Easy Tagger - A tool for managing semantic version tags in git repositories
+Semtagger - A tool for managing semantic version tags in git repositories
 """
 
 import argparse
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 def main():
   parser = argparse.ArgumentParser(
-    description='Git Easy Tagger - Manage semantic version tags in git repositories',
+    description='Semtagger - Manage semantic version tags in git repositories',
     formatter_class=argparse.RawDescriptionHelpFormatter,
     epilog="""
 Examples:
