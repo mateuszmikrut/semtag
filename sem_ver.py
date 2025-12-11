@@ -64,6 +64,11 @@ class SemanticVersion:
     self.prerelease = ""
     return self
   
+  def set_label(self, label: str) -> 'SemanticVersion':
+    """Set a label/prerelease identifier"""
+    self.prerelease = label
+    return self
+  
   def __str__(self) -> str:
     """Return formatted version string"""
     version = f"{self.prefix}{self.major}.{self.minor}.{self.patch}"
