@@ -1,79 +1,70 @@
 """
-Semantic versioning module for parsing and incrementing version strings
+Semantic versioning module for parsing and bumping versions numbers
+More about semantic versioning: https://semver.org/
 """
-
-import logging
 import re
 
-logger = logging.getLogger(__name__)
-
-
 class SemanticVersion:
-  """Handle semantic versioning parsing and increment operations"""
-  
+  """Handle semantic versioning parsing and incrementing"""
   def __init__(self, version_string: str):
     self.original = version_string
     self.prefix = ""
     self.major = 0
     self.minor = 0
     self.patch = 0
-    self.prerelease = ""
+    self.label = ""
+    self._parse(version_string)
+
   def _parse(self, version_string: str):
-    """Parse semantic version string"""
-    # Remove 'v' prefix if present
+    """Parse and validate semantic version string"""
+    # 'v' prefix handling
     if version_string.startswith('v'):
       self.prefix = 'v'
       version_string = version_string[1:]
-    
-    # Pattern to match semantic versioning: major.minor.patch[-prerelease]
-    pattern = r'^(\d+)\.(\d+)\.(\d+)(?:-(.+))?$'
+
+    # regex from semver.org
+    pattern = r'^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'
     match = re.match(pattern, version_string)
     
     if not match:
       raise ValueError(f"Invalid semantic version format: {self.original}")
     
-    self.major = int(match.group(1))
-    self.minor = int(match.group(2))
-    self.patch = int(match.group(3))
-    self.prerelease = match.group(4) or ""
-    
-    logger.debug(f"Parsed version: {self.major}.{self.minor}.{self.patch}" +
-                 (f"-{self.prerelease}" if self.prerelease else ""))
-    self.minor = int(match.group(2))
-    self.patch = int(match.group(3))
-    self.prerelease = match.group(4) or ""
-  
-  def increment_major(self) -> 'SemanticVersion':
-    """Increment major version and reset minor and patch"""
-    self.major += 1
+    self.major = int(match.group('major'))
+    self.minor = int(match.group('minor'))
+    self.patch = int(match.group('patch'))
+    self.label = match.group('prerelease') or ""
+
+  def inc_major(self, by=1) -> 'SemanticVersion':
+    """ Increment major version and reset minor & patch"""
+    self.major += by
     self.minor = 0
     self.patch = 0
-    self.prerelease = ""
+    self.label = ""
     return self
   
-  def increment_minor(self) -> 'SemanticVersion':
-    """Increment minor version and reset patch"""
-    self.minor += 1
+  def inc_minor(self, by=1) -> 'SemanticVersion':
+    """ Increment minor version and reset patch"""
+    self.minor += by
     self.patch = 0
-    self.prerelease = ""
+    self.label = ""
     return self
   
-  def increment_patch(self) -> 'SemanticVersion':
-    """Increment patch version"""
-    self.patch += 1
-    self.prerelease = ""
+  def inc_patch(self, by=1) -> 'SemanticVersion':
+    """ Increment patch - preserve major & minor"""
+    self.patch += by
+    self.label = ""
     return self
   
-  def set_label(self, label: str) -> 'SemanticVersion':
-    """Set a label/prerelease identifier"""
-    self.prerelease = label
+  def add_label(self, label: str) -> 'SemanticVersion':
+    """Add a label to the version"""
+    self.label = label
     return self
   
   def __str__(self) -> str:
-    """Return formatted version string"""
+    """Return concatinated string"""
     version = f"{self.prefix}{self.major}.{self.minor}.{self.patch}"
-    if self.prerelease:
-      version += f"-{self.prerelease}"
+    if self.label:
+      version += f"-{self.label}"
     return version
   
   def __repr__(self) -> str:
