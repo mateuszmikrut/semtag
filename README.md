@@ -2,24 +2,6 @@
 
 A pretty trivial python script to easely manage git tags with semantic versioning (semver.org)  
 
-
-## Installation
-
-Using pip  (preferred)
-```bash
-pip install semtagger
-```
-
-From git
-```bash
-git clone https://github.com/mateuszmikrut/semtagger.git
-cd semtagger
-python -m venv venv
-source ./venv/bin/activate
-pip install -r requirements.txt
-python ./semtagger.py
-```
-
 ## Usage
 
 ```bash
@@ -51,6 +33,23 @@ python semtagger.py -p -b 5
 
 # Increment patch and add label (1.0.0 -> 1.0.1-rc1)
 python semtagger.py -p -l rc1
+```
+
+## Installation
+
+Using pip  (preferred)
+```bash
+pip install semtagger
+```
+
+From git
+```bash
+git clone https://github.com/mateuszmikrut/semtagger.git
+cd semtagger
+python -m venv venv
+source ./venv/bin/activate
+pip install -r requirements.txt
+python ./semtagger.py
 ```
 
 ## Supported Version Formats
