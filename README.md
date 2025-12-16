@@ -35,10 +35,11 @@ python semtagger.py [options]
 - `-p, --patch` - Increment patch version (x.x.PATCH)
 - `-m, --minor` - Increment minor version (x.MINOR.0)
 - `-M, --major` - Increment major version (MAJOR.0.0)
+- `-b, --by` - Increment by a specific number (default: 1)
+- `-l, --label` - Add label to the version (e.g., -l rc1 creates 1.0.0-rc1)
 - `-u, --push` - Push the new tag to remote repository
-- `--pull` - Pull from remote before creating tag
+- `-f, --force` - Force operation even if not on main/master branch
 - `-v, --verbose` - Increase verbosity (use -v, -vv, or -vvv for more detail)
-- `--dry-run` - Show what would be done without actually creating or pushing tags
 
 ### Examples
 
@@ -52,23 +53,26 @@ python semtagger.py -m
 # Increment major version (1.0.0 -> 2.0.0)
 python semtagger.py -M
 
+# Increment patch by 5 (1.0.0 -> 1.0.5)
+python semtagger.py -p -b 5
+
+# Increment patch and add label (1.0.0 -> 1.0.1-rc1)
+python semtagger.py -p -l rc1
+
+# Increment minor with label (1.0.0 -> 1.1.0-beta)
+python semtagger.py -m -l beta
+
 # Increment patch and push to remote
 python semtagger.py -p -u
-# Pull before tagging and push
-python semtagger.py -p --pull -u
 
 # With verbose output (INFO level)
 python semtagger.py -p -v
+
 # With debug output (DEBUG level)
 python semtagger.py -p -vvv
 
-# Dry run to preview changes without making them
-python semtagger.py -p --dry-run
-
-# Dry run with push flag to see what would happen
-python semtagger.py -p -u --dry-run
-```hon semtagger.py -p -vvv
-```hon semtagger.py -p --pull -u
+# Force major increment on non-main branch
+python semtagger.py -M -f
 ```
 
 ## Supported Version Formats
