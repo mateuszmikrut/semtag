@@ -1,4 +1,4 @@
-# Semantic Versionning GIT Tagger
+# Semantic Version GIT Tagger
 
 A pretty trivial python script to easely manage git tags with semantic versioning (semver.org)  
 
@@ -21,13 +21,13 @@ pip install -r requirements.txt
 
 2. Make the script executable (optional):
 ```bash
-chmod +x git_tagger.py
+chmod +x semtagger.py
 ```
 
 ## Usage
 
 ```bash
-python git_tagger.py [options]
+python semtagger.py [options]
 ```
 
 ### Options
@@ -44,31 +44,31 @@ python git_tagger.py [options]
 
 ```bash
 # Increment patch version (1.0.0 -> 1.0.1)
-python git_tagger.py -p
+python semtagger.py -p
 
 # Increment minor version (1.0.0 -> 1.1.0)
-python git_tagger.py -m
+python semtagger.py -m
 
 # Increment major version (1.0.0 -> 2.0.0)
-python git_tagger.py -M
+python semtagger.py -M
 
 # Increment patch and push to remote
-python git_tagger.py -p -u
+python semtagger.py -p -u
 # Pull before tagging and push
-python git_tagger.py -p --pull -u
+python semtagger.py -p --pull -u
 
 # With verbose output (INFO level)
-python git_tagger.py -p -v
+python semtagger.py -p -v
 # With debug output (DEBUG level)
-python git_tagger.py -p -vvv
+python semtagger.py -p -vvv
 
 # Dry run to preview changes without making them
-python git_tagger.py -p --dry-run
+python semtagger.py -p --dry-run
 
 # Dry run with push flag to see what would happen
-python git_tagger.py -p -u --dry-run
-```hon git_tagger.py -p -vvv
-```hon git_tagger.py -p --pull -u
+python semtagger.py -p -u --dry-run
+```hon semtagger.py -p -vvv
+```hon semtagger.py -p --pull -u
 ```
 
 ## Supported Version Formats

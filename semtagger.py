@@ -107,7 +107,7 @@ Examples:
   logger.info(f"New version: {new_tag}")
   
   # Always print the new tag - could use critial for this
-  print(f"{new_tag}")
+  print(f"\033[92m{new_tag}\033[0m")
   
   ### Create tag and optionally push ###
   if not gittags.create_and_push_tag(repo, new_tag, push=args.push):
