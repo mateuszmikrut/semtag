@@ -21,15 +21,10 @@ def main():
     formatter_class=argparse.RawDescriptionHelpFormatter,
     epilog="""
 Examples:
-  %(prog)s -p              # Increment patch version (1.0.0 -> 1.0.1)
   %(prog)s -m              # Increment minor version (1.0.0 -> 1.1.0)
   %(prog)s -M              # Increment major version (1.0.0 -> 2.0.0)
-  %(prog)s -p -b 5         # Increment patch by 5 (1.0.0 -> 1.0.5)
+  %(prog)s -p -b 5         # Increment patch version by 5 (1.0.0 -> 1.0.5)
   %(prog)s -p -l rc1       # Increment patch and add label (1.0.0 -> 1.0.1-rc1)
-  %(prog)s -m -l beta      # Increment minor with label (1.0.0 -> 1.1.0-beta)
-  %(prog)s -p -u           # Increment patch and push to remote
-  %(prog)s -p -vvv         # Increment patch with debug logging
-  %(prog)s -M -f           # Force major increment on non-main branch
         """
   )
   parser.add_argument('-v', '--verbose', action='count', default=0, help='Verbosity (-v for INFO, -vv for DEBUG)')

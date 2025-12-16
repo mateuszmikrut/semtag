@@ -44,35 +44,17 @@ python semtagger.py [options]
 ### Examples
 
 ```bash
-# Increment patch version (1.0.0 -> 1.0.1)
-python semtagger.py -p
-
 # Increment minor version (1.0.0 -> 1.1.0)
 python semtagger.py -m
 
 # Increment major version (1.0.0 -> 2.0.0)
 python semtagger.py -M
 
-# Increment patch by 5 (1.0.0 -> 1.0.5)
+# Increment patch version (1.0.0 -> 1.0.5)
 python semtagger.py -p -b 5
 
 # Increment patch and add label (1.0.0 -> 1.0.1-rc1)
 python semtagger.py -p -l rc1
-
-# Increment minor with label (1.0.0 -> 1.1.0-beta)
-python semtagger.py -m -l beta
-
-# Increment patch and push to remote
-python semtagger.py -p -u
-
-# With verbose output (INFO level)
-python semtagger.py -p -v
-
-# With debug output (DEBUG level)
-python semtagger.py -p -vvv
-
-# Force major increment on non-main branch
-python semtagger.py -M -f
 ```
 
 ## Supported Version Formats
