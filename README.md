@@ -2,32 +2,28 @@
 
 A pretty trivial python script to easely manage git tags with semantic versioning (semver.org)  
 
-## Features
-
-- ✅ Check if directory is a git workspace
-- ✅ Warn if not on main/master branch
-- ✅ Optional pull from remote before tagging
-- ✅ Get latest semantic version tag
-- ✅ Increment major, minor, or patch version
-- ✅ Support for various version formats (v1.0.0, 1.0.0, 1.0.0-rc1)
-- ✅ Create and optionally push tags to remote
 
 ## Installation
 
-1. Install dependencies:
+Using pip  (preferred)
 ```bash
-pip install -r requirements.txt
+pip install semtagger
 ```
 
-2. Make the script executable (optional):
+From git
 ```bash
-chmod +x semtagger.py
+git clone https://github.com/mateuszmikrut/semtagger.git
+cd semtagger
+python -m venv venv
+source ./venv/bin/activate
+pip install -r requirements.txt
+python ./semtagger.py
 ```
 
 ## Usage
 
 ```bash
-python semtagger.py [options]
+semtagger.py [options]
 ```
 
 ### Options
