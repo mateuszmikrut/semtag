@@ -39,6 +39,7 @@ Examples:
   
   parser.add_argument('-l', '--label', type=str, default=None, help='Add label to the version (e.g., -l rc1 creates 1.0.0-rc1)')
   parser.add_argument('-u', '--push', action='store_true', help='Push the new tag to remote repository', default=False)
+  parser.add_argument('-U', '--pushall', action='store_true', help='Push all local tags to remote repository', default=False)
   parser.add_argument('-n', '--no-fetch', action='store_true', help='Do not fetch tags from remote before operation', default=False)
   args = parser.parse_args()
   
@@ -88,9 +89,9 @@ Examples:
   # Fetch tags from remote to avoid duplicates
   if not args.no_fetch:
     try:
-      logger.info("Fetching tags from remote...")
+      logger.debug("Fetching tags from remote...")
       repo.remotes.origin.fetch(tags=True)
-      logger.debug("Tags fetched successfully")
+      logger.info("Tags fetched successfully")
     except Exception as e:
       logger.warning(f"Error fetching tags: {e}")
     
@@ -135,8 +136,12 @@ Examples:
     logger.info(f"Successfully created tag: {new_tag}")
     
     # Push if requested
-    if args.push:
-      logger.info(f"Pushing tag '{new_tag}' to remote...")
+    if args.pushall:
+      logger.debug("Pushing all local tags to remote...")
+      repo.remote('origin').push(tags=True)
+      logger.info("Successfully pushed all tags to remote")
+    elif args.push:
+      logger.debug(f"Pushing tag '{new_tag}' to remote...")
       repo.remote('origin').push(new_tag) # It only pushes the new tag not all from local repo
       logger.info(f"Successfully pushed new tag: {new_tag}")
     else:
