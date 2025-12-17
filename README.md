@@ -1,6 +1,6 @@
 # Semantic Version GIT Tagger
 
-A pretty trivial python script to easely manage git tags with semantic versioning (semver.org)  
+A pretty trivial python script to easily manage git tags with semantic versioning (semver.org)  
 
 ## Usage
 
