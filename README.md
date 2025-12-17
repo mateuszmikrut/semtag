@@ -16,7 +16,8 @@ semtagger.py [options]
 - `-b, --by` - Increment by a specific number (default: 1)
 - `-l, --label` - Add label to the version (e.g., -l rc1 creates 1.0.0-rc1)
 - `-u, --push` - Push the new tag to remote repository
-- `-f, --force` - Force operation even if not on main/master branch
+- `-n, --nofetch` - Do not fetch tags from remote prior creating new one
+<!-- - `-f, --force` - Force operation even if not on main/master branch -->
 - `-v, --verbose` - Increase verbosity (use -v, -vv, or -vvv for more detail)
 
 ### Examples
@@ -31,8 +32,8 @@ python semtagger.py -M
 # Increment patch version (1.0.0 -> 1.0.5)
 python semtagger.py -p -b 5
 
-# Increment patch and add label (1.0.0 -> 1.0.1-rc1)
-python semtagger.py -p -l rc1
+# Increment patch and add label (1.0.0 -> 1.0.1-rc1), don't fetch and push new tag
+python semtagger.py -n -u -p -l rc1
 ```
 
 ## Installation

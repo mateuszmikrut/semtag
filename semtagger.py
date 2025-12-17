@@ -29,7 +29,7 @@ Examples:
         """
   )
   parser.add_argument('-v', '--verbose', action='count', default=0, help='Verbosity (-v for INFO, -vv for DEBUG)')
-  parser.add_argument('-f', '--force', action='store_true', default=False, help='Force the operation even if not on main/master branch')
+  # parser.add_argument('-f', '--force', action='store_true', default=False, help='Force the operation even if not on main/master branch')
   parser.add_argument('-b', '--by', action='store', type=int, default=1, help='Increment by a specific number')
   
   version_group = parser.add_mutually_exclusive_group(required=True)
