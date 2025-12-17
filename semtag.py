@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
 """
-Semtagger - A tool for managing semantic version tags in git repositories
+SemTag - A tool for managing semantic version tags in git repositories
 """
 
 import argparse
 import logging
 # import sys
-from semver import SemanticVersion, semsort
+from SemanticVersion import SemanticVersion, semsort
 import git
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
 def main():
-  """Main function for semtagger"""
+  """ Main function """
   ########################
   ### Argument Parsing ###
   ########################
   parser = argparse.ArgumentParser(
-    description='Semtagger - Manage semantic version tags in git repositories',
+    description='SemTag - Manage semantic version tags in git repositories',
     formatter_class=argparse.RawDescriptionHelpFormatter,
     epilog="""
 Examples:
