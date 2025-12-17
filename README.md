@@ -18,7 +18,7 @@ semtag [options]
 - `-u, --push` - Push the new tag to remote repository
 - `-n, --nofetch` - Do not fetch tags from remote prior creating new one
 <!-- - `-f, --force` - Force operation even if not on main/master branch -->
-- `-v, --verbose` - Increase verbosity (use -v, -vv, or -vvv for more detail)
+- `-v, --verbose` - Increase verbosity (use -v or -vv for more detail (INFO,DEBUG))
 
 ### Examples
 
