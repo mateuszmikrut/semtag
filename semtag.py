@@ -73,7 +73,7 @@ Examples:
     exit(99)
   
   reponame = Path(repo.working_dir).name
-  logger.debug(f"Repository name : {reponame}")
+  logger.info(f"Repository name : {reponame}")
   
   ## Check if on main/master branch (warning only)
   # try:
@@ -88,20 +88,21 @@ Examples:
   # Fetch tags from remote to avoid duplicates
   if not args.no_fetch:
     try:
-      logger.debug("Fetching tags from remote...")
+      logger.info("Fetching tags from remote...")
       repo.remotes.origin.fetch(tags=True)
       logger.debug("Tags fetched successfully")
     except Exception as e:
       logger.warning(f"Error fetching tags: {e}")
     
+  logger.debug(f"Tags in repository: {repo.tags}")
   tags = semsort([tag.name for tag in repo.tags])
-  
+  logger.debug(f"Sorted semantic tags: {tags}")
   if tags:
     latest_tag = tags[0]
-    logger.debug(f"Latest semantic version tag: {latest_tag}")
+    logger.info(f"Latest semantic version tag: {latest_tag}")
   else:
     # No tags found, start with 0.0.0
-    logger.debug("No semantic version tags found. Starting with 0.0.0")
+    logger.info("No semantic version tags found. Starting with 0.0.0")
     latest_tag = '0.0.0'
     
   # Initialize obj
@@ -124,7 +125,7 @@ Examples:
     current_version.add_label(args.label)
   
   new_tag = str(current_version)
-  logger.info(f"Generate tag: {new_tag}")
+  logger.debug(f"Generated new tag: {new_tag}")
     
   ### Create and push
   try:
