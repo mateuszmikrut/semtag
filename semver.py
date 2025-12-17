@@ -1,5 +1,5 @@
 """
-Semantic versioning module for parsing and bumping versions numbers
+Semantic versioning module for parsing and bumping ver_list numbers
 More about semantic versioning: https://semver.org/
 """
 import re
@@ -70,3 +70,22 @@ class SemanticVersion:
   def __repr__(self) -> str:
     """Return representation of version"""
     return f"SemanticVersion('{str(self)}')"
+
+
+### This is standalone function (could be @staticmethod as well) ###
+def semsort(versions: list[str]) -> list[str]:
+  """Sort semantic version tags by major, minor, patch """
+  ver_list = []
+  for v in versions:
+    try:
+      version = SemanticVersion(v)
+      ver_list.append((v, version))
+    except ValueError:
+      # Skip invalid semantic version tags
+      continue
+
+  ver_list.sort(
+    key=lambda x: (x[1].major, x[1].minor, x[1].patch),
+    reverse=True
+  )
+  return [x for x, _ in ver_list]

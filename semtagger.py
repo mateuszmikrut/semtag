@@ -5,9 +5,10 @@ Semtagger - A tool for managing semantic version tags in git repositories
 
 import argparse
 import logging
-import sys
-from gitstuff import git_workspace, check_main_branch, get_latest_tag, create_and_push_tag
-from semver import SemanticVersion
+# import sys
+from semver import SemanticVersion, semsort
+import git
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +39,7 @@ Examples:
   
   parser.add_argument('-l', '--label', type=str, default=None, help='Add label to the version (e.g., -l rc1 creates 1.0.0-rc1)')
   parser.add_argument('-u', '--push', action='store_true', help='Push the new tag to remote repository', default=False)
+  parser.add_argument('-n', '--no-fetch', action='store_true', help='Do not fetch tags from remote before operation', default=False)
   args = parser.parse_args()
   
   ### Logging based on verbosity ###
@@ -57,33 +59,53 @@ Examples:
   ### Main Logic ###
   ##################
   logger.debug(f"Arguments: {args}")
-  
+  pwd = Path('.').resolve()
+
   ### Check if this is a git workspace ###
-  repo = git_workspace()
-  if repo is None:
-    logger.error("Not a git repository. Exiting.")
-    sys.exit(1)
+  try:
+    repo = git.Repo(pwd, search_parent_directories=True)
+    logger.debug(f"Found git repository at {repo.working_dir}")
+  except git.InvalidGitRepositoryError:
+    logger.error(f"{pwd} is not a git repository")
+    exit(1)
+  except git.GitCommandError as e:
+    logger.error(f"Git command failed: {e}")
+    exit(99)
+  
+  reponame = Path(repo.working_dir).name
+  logger.debug(f"Repository name : {reponame}")
   
   ## Check if on main/master branch (warning only)
-  if not check_main_branch(repo):
-    logger.warning("You are not on the main/master branch.")
-    if not args.force:
-      logger.error("Use -f to force the operation on non-main/master branches.")
-      sys.exit(2)
+  # try:
+  #   if repo.active_branch.name not in ['main', 'master']:
+  #     logger.warning(f"You are on branch '{repo.active_branch.name}', not on main/master")
+  #   logger.debug(f"On {repo.active_branch.name} branch")
+  # except TypeError:
+  #   logger.warning("HEAD is detached, not on any branch")
+  #   exit(2)
   
-  ## Get latest tag
-  latest_tag = get_latest_tag(repo)
+
+  # Fetch tags from remote to avoid duplicates
+  if not args.no_fetch:
+    try:
+      logger.debug("Fetching tags from remote...")
+      repo.remotes.origin.fetch(tags=True)
+      logger.debug("Tags fetched successfully")
+    except Exception as e:
+      logger.warning(f"Error fetching tags: {e}")
+    
+  tags = semsort([tag.name for tag in repo.tags])
   
-  if latest_tag is None:
+  if tags:
+    latest_tag = tags[0]
+    logger.debug(f"Latest semantic version tag: {latest_tag}")
+  else:
     # No tags found, start with 0.0.0
     logger.debug("No semantic version tags found. Starting with 0.0.0")
-    current_version = SemanticVersion("0.0.0")
-  else:
-    try:
-      current_version = SemanticVersion(latest_tag)
-    except ValueError as e:
-      logger.error(f"Error parsing latest tag: {e}")
-      sys.exit(1)
+    latest_tag = '0.0.0'
+    
+  # Initialize obj
+  current_version = SemanticVersion(latest_tag)
   
   ### Increment version ###
   if args.major:
@@ -102,17 +124,33 @@ Examples:
     current_version.add_label(args.label)
   
   new_tag = str(current_version)
-  logger.info(f"New version: {new_tag}")
-  
-  # Always print the new tag - could use critial for this
-  print(f"\033[92m{new_tag}\033[0m")
-  
-  ### Create tag and optionally push ###
-  if not create_and_push_tag(repo, new_tag, push=args.push):
-    sys.exit(1)
-  
-  logger.info("Done!")
+  logger.info(f"Generate tag: {new_tag}")
+    
+  ### Create and push
+  try:
+    #TODO: add tag message option later
+    #repo.create_tag(new_tag, message=f"Release {new_tag}")
+    repo.create_tag(new_tag)
+    logger.info(f"Successfully created tag: {new_tag}")
+    
+    # Push if requested
+    if args.push:
+      logger.info(f"Pushing tag '{new_tag}' to remote...")
+      repo.remote('origin').push(new_tag) # It only pushes the new tag not all from local repo
+      logger.info(f"Successfully pushed new tag: {new_tag}")
+    else:
+      logger.debug("Not pushing tag to remote")
+  except git.GitCommandError as e:
+    logger.error(f"Error creating/pushing tag: {e}")
+  except Exception as e:
+    logger.error(f"Error: {e}")  
 
+  # Print the new tag to stout as confirmation if not verbose
+  if args.verbose == 0:
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RESET = '\033[0m'
+    print(f"{GREEN}{reponame}{RESET} -> {YELLOW}{new_tag}{RESET}")
 
 if __name__ == "__main__":
   main()
