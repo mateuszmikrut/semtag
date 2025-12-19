@@ -10,16 +10,21 @@ semtag [options]
 
 ### Options
 
-- `-p, --patch` - Increment patch version (x.x.PATCH)
-- `-m, --minor` - Increment minor version (x.MINOR.0)
-- `-M, --major` - Increment major version (MAJOR.0.0)
-- `-b, --by` - Increment by a specific number (default: 1)
-- `-l, --label` - Add label to the version (e.g., -l rc1 creates 1.0.0-rc1)
-- `-u, --push` - Push the new tag to remote repository
-- `-U, --pushall` - Push all local tags to remote repository
-- `-n, --nofetch` - Do not fetch tags from remote prior creating new one
-<!-- - `-f, --force` - Force operation even if not on main/master branch -->
-- `-v, --verbose` - Increase verbosity (use -v or -vv for more detail (INFO,DEBUG))
+<!-- OPTIONS:START -->
+```
+  -h, --help         show this help message and exit
+  -v, --verbose      Verbosity (-v for INFO, -vv for DEBUG)
+  -b, --by BY        Increment by a specific number
+  -p, --patch        Increment patch version (x.x.PATCH)
+  -m, --minor        Increment minor version (x.MINOR.0)
+  -M, --major        Increment major version (MAJOR.0.0)
+  -l, --label LABEL  Add label to the version (e.g., -l rc1 creates 1.0.0-rc1)
+  -a, --msg MSG      Annotated tags message
+  -u, --push         Push the new tag to remote repository
+  -U, --pushall      Push all local tags to remote repository
+  -n, --no-fetch     Do not fetch tags from remote before operation
+```
+<!-- OPTIONS:END -->
 
 ### Examples
 
