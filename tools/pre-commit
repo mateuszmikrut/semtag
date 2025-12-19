@@ -15,7 +15,14 @@ if git diff --cached --name-only | grep -q semtag.py; then
   OPTIONS_TMP=$(mktemp)
   README_TMP=$(mktemp)
 
-  python semtag.py --help 2>&1 | sed -n '/^options:/,/^$/p' | tail -n +2 > "$OPTIONS_TMP"
+  # Prefer virtual environment python if exists
+  if [ -d venv ];then
+    PYPATH="$REPO_ROOT/venv/bin/python"
+  else
+    PYPATH="python3"
+  fi
+
+  $PYPATH semtag.py --help 2>&1 | sed -n '/^options:/,/^$/p' | tail -n +2 > "$OPTIONS_TMP"
 
   # README with updated options
   awk -v opts_file="$OPTIONS_TMP" '
