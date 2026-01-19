@@ -49,6 +49,12 @@ Using pip  (preferred)
 pip install semtag
 ```
 
+Using Homebrew
+
+```bash
+brew install mateuszmikrut/tap/semtag
+```
+
 From git
 ```bash
 git clone https://github.com/mateuszmikrut/semtag.git
