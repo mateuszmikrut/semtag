@@ -80,7 +80,7 @@ jobs:
 
 
       - name: Update formula
-        # working-directory: semtag
+        # no working directory, as I need both repos
         run: |
           set -euo pipefail
           TAG="${GITHUB_REF_NAME}"
@@ -114,6 +114,7 @@ jobs:
           envsubst < "${{ env.TEMPLATE_PATH }}" > "${{ env.FORMULA_PATH }}"
 
       - name: Commit and push changes
+        working-directory: tap
         run: |
           set -euo pipefail
           git status --short
