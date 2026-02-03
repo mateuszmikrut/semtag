@@ -113,7 +113,7 @@ jobs:
           set -euo pipefail
           TAG="${GITHUB_REF_NAME}"
           VERSION="${TAG#v}"
-          TARBALL_URL="https://github.com/mateuszmikrut/semtag/archive/refs/tags/${TAG}.tar.gz"
+          TARBALL_URL="https://files.pythonhosted.org/packages/source/s/semtag/semtag-${VERSION}.tar.gz"
 
           curl -sL "$TARBALL_URL" -o semtag.tar.gz
           TARBALL_SHA=$(shasum -a 256 semtag.tar.gz | awk '{print $1}')
