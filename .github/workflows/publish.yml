@@ -101,7 +101,7 @@ jobs:
           sudo apt-get update
           sudo gem install fpm
 
-      - name: Build .deb package
+      - name: Build .deb and .rpm packages
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           TMPDIR=$(mktemp -d)
@@ -122,7 +122,7 @@ jobs:
           EOF
           chmod +x "$TMPDIR/usr/bin/semtag"
 
-          # Build .deb with FPM - use dot to package everything in TMPDIR
+          # DEB
           fpm -s dir \
             -t deb \
             -n semtag \
@@ -136,10 +136,26 @@ jobs:
             --depends "git" \
             .
 
-      - name: Upload .deb to Release
+          # RPM
+          fpm -s dir \
+            -t rpm \
+            -n semtag \
+            -v "$VERSION" \
+            -C "$TMPDIR" \
+            -p semtag-${VERSION}-1.x86_64.rpm \
+            --description "Tool for managing semantic version tags in git repositories" \
+            --url "https://github.com/mateuszmikrut/semtag" \
+            --license "MIT" \
+            --depends "python3" \
+            --depends "git" \
+            .
+
+      - name: Upload .deb and .rpm to Release
         uses: softprops/action-gh-release@v1
         with:
-          files: semtag-*.deb
+          files: |
+            semtag-*.deb
+            semtag-*.rpm
 
   # publish-homebrew:
   #   name: Publish Homebrew tap
