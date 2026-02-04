@@ -41,21 +41,21 @@ jobs:
           name: dist
           path: dist/*
 
-  publish-pypi:
-    name: Publish to PyPI
-    runs-on: ubuntu-latest
-    needs: build
-    permissions:
-      id-token: write
-    steps:
-      - name: Download dist artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist
+  # publish-pypi:
+  #   name: Publish to PyPI
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   permissions:
+  #     id-token: write
+  #   steps:
+  #     - name: Download dist artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: dist
+  #         path: dist
 
-      - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+  #     - name: Publish to PyPI
+  #       uses: pypa/gh-action-pypi-publish@release/v1
 
   publish-github:
     name: Publish GitHub Release
@@ -128,82 +128,82 @@ jobs:
         with:
           files: semtag-*.deb
 
-  publish-homebrew:
-    name: Publish Homebrew tap
-    runs-on: ubuntu-latest
-    needs:
-      - publish-pypi
-      - publish-github
-    permissions:
-      contents: write
-    env:
-      FORMULA_PATH: tap/Formula/semtag.rb
-      TEMPLATE_PATH: tap/Templates/semtag.template
-    steps:
-      - name: Checkout semtag repo
-        uses: actions/checkout@v4
-        with:
-          repository: mateuszmikrut/semtag
-          path: semtag
+  # publish-homebrew:
+  #   name: Publish Homebrew tap
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - publish-pypi
+  #     - publish-github
+  #   permissions:
+  #     contents: write
+  #   env:
+  #     FORMULA_PATH: tap/Formula/semtag.rb
+  #     TEMPLATE_PATH: tap/Templates/semtag.template
+  #   steps:
+  #     - name: Checkout semtag repo
+  #       uses: actions/checkout@v4
+  #       with:
+  #         repository: mateuszmikrut/semtag
+  #         path: semtag
 
-      - name: Checkout tap repo
-        uses: actions/checkout@v4
-        with:
-          repository: mateuszmikrut/homebrew-tap
-          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
-          path: tap
+  #     - name: Checkout tap repo
+  #       uses: actions/checkout@v4
+  #       with:
+  #         repository: mateuszmikrut/homebrew-tap
+  #         token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+  #         path: tap
 
-      # - name: Create a branch for the update
-      #   working-directory: tap
-      #   run: |
-      #     set -euo pipefail
-      #     git checkout -b bump-semtag-"${GITHUB_REF_NAME}"
+  #     # - name: Create a branch for the update
+  #     #   working-directory: tap
+  #     #   run: |
+  #     #     set -euo pipefail
+  #     #     git checkout -b bump-semtag-"${GITHUB_REF_NAME}"
 
-      - name: Update formula
-        run: |
-          set -euo pipefail
-          TAG="${GITHUB_REF_NAME}"
-          VERSION="${TAG#v}"
-          TARBALL_URL="https://github.com/mateuszmikrut/semtag/releases/download/${VERSION}/semtag-${VERSION}.tar.gz"
+  #     - name: Update formula
+  #       run: |
+  #         set -euo pipefail
+  #         TAG="${GITHUB_REF_NAME}"
+  #         VERSION="${TAG#v}"
+  #         TARBALL_URL="https://github.com/mateuszmikrut/semtag/releases/download/${VERSION}/semtag-${VERSION}.tar.gz"
 
-          curl -sL "$TARBALL_URL" -o semtag.tar.gz
-          TARBALL_SHA=$(shasum -a 256 semtag.tar.gz | awk '{print $1}')
+  #         curl -sL "$TARBALL_URL" -o semtag.tar.gz
+  #         TARBALL_SHA=$(shasum -a 256 semtag.tar.gz | awk '{print $1}')
 
-          RESOURCES=""
-          for pkg in $(grep -vE '^#|^$' semtag/requirements.txt ); do
-            name=$(echo "$pkg" | sed 's/[>=<].*//')
-            version=$(echo "$pkg" | sed 's/.*[>=]=//; s/[<>=].*//')
+  #         RESOURCES=""
+  #         for pkg in $(grep -vE '^#|^$' semtag/requirements.txt ); do
+  #           name=$(echo "$pkg" | sed 's/[>=<].*//')
+  #           version=$(echo "$pkg" | sed 's/.*[>=]=//; s/[<>=].*//')
 
-            pypi_url="https://pypi.org/pypi/${name}/${version}/json"
-            response=$(curl -s "$pypi_url" | tr -d '\r')
+  #           pypi_url="https://pypi.org/pypi/${name}/${version}/json"
+  #           response=$(curl -s "$pypi_url" | tr -d '\r')
 
-            if ! echo "$response" | jq empty 2>/dev/null; then
-              echo "ERROR: Failed to parse PyPI response for $pkg $version" >&2
-              continue
-            fi
-            url=$(echo "$response" | jq -r '.urls[] | select(.packagetype=="sdist") | .url' | head -1)
-            sha=$(echo "$response" | jq -r '.urls[] | select(.packagetype=="sdist") | .digests.sha256' | head -1)
+  #           if ! echo "$response" | jq empty 2>/dev/null; then
+  #             echo "ERROR: Failed to parse PyPI response for $pkg $version" >&2
+  #             continue
+  #           fi
+  #           url=$(echo "$response" | jq -r '.urls[] | select(.packagetype=="sdist") | .url' | head -1)
+  #           sha=$(echo "$response" | jq -r '.urls[] | select(.packagetype=="sdist") | .digests.sha256' | head -1)
 
-            RESOURCES="$(printf "%s%s\n  resource \"%s\" do\n    url \"%s\"\n    sha256 \"%s\"\n  end\n\n" "$RESOURCES" "" "$name" "$url" "$sha")"
-          done
+  #           RESOURCES="$(printf "%s%s\n  resource \"%s\" do\n    url \"%s\"\n    sha256 \"%s\"\n  end\n\n" "$RESOURCES" "" "$name" "$url" "$sha")"
+  #         done
 
-          export RESOURCES
-          export TARBALL_URL
-          export TARBALL_SHA
-          export VERSION
+  #         export RESOURCES
+  #         export TARBALL_URL
+  #         export TARBALL_SHA
+  #         export VERSION
 
-          envsubst < "${{ env.TEMPLATE_PATH }}" > "${{ env.FORMULA_PATH }}"
+  #         envsubst < "${{ env.TEMPLATE_PATH }}" > "${{ env.FORMULA_PATH }}"
 
-      - name: Commit and push changes
-        working-directory: tap
-        run: |
-          set -euo pipefail
-          git status --short
-          if git diff --quiet; then
-            echo "No changes to commit"
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit -am "Update semtag to ${GITHUB_REF_NAME}"
-          git push
+  #     - name: Commit and push changes
+  #       working-directory: tap
+  #       run: |
+  #         set -euo pipefail
+  #         git status --short
+  #         if git diff --quiet; then
+  #           echo "No changes to commit"
+  #           exit 0
+  #         fi
+  #         git config user.name "github-actions[bot]"
+  #         git config user.email "github-actions[bot]@users.noreply.github.com"
+  #         git commit -am "Update semtag to ${GITHUB_REF_NAME}"
+  #         git push
