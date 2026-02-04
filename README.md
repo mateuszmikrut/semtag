@@ -30,17 +30,17 @@ semtag [options]
 ### Examples
 
 ```bash
-# Increment minor version (1.0.0 -> 1.1.0)
-semtag -m
+# Increment minor version and push to origin (1.0.0 -> 1.1.0)
+semtag -mu
 
 # Increment major version (1.0.0 -> 2.0.0)
 semtag -M
 
 # Increment patch version (1.0.0 -> 1.0.5)
-semtag -p -b 5
+semtag -u -p -b 5
 
-# Increment patch and add label (1.0.0 -> 1.0.1-rc1), don't fetch and push new tag
-semtag -n -u -p -l rc1
+# Increment patch and add label (1.0.0 -> 1.0.1-rc1)
+semtag -u -pl rc1
 ```
 
 ## Installation
