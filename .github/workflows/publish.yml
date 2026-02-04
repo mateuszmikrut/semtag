@@ -104,16 +104,13 @@ jobs:
       - name: Build .deb package
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-
-          # Extract wheel and install to temp directory
           TMPDIR=$(mktemp -d)
 
-          # Install semtag to temp directory
-          pip install --prefix="$TMPDIR/usr/local" dist/semtag*.whl
+          pip install --prefix="$TMPDIR/usr" dist/semtag*.whl
 
-          # List what was created to debug
-          echo "=== Directory structure after install ==="
-          find "$TMPDIR" -type f
+          if [ -d "$TMPDIR/usr/bin" ]; then
+            chmod +x "$TMPDIR/usr/bin"/*
+          fi
 
           # Build .deb with FPM - use dot to package everything in TMPDIR
           fpm -s dir \
