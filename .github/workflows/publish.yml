@@ -107,12 +107,15 @@ jobs:
 
           # Extract wheel and install to temp directory
           TMPDIR=$(mktemp -d)
-          mkdir -p "$TMPDIR/usr/local/bin"
 
           # Install semtag to temp directory
           pip install --prefix="$TMPDIR/usr/local" dist/semtag*.whl
 
-          # Build .deb with FPM
+          # List what was created to debug
+          echo "=== Directory structure after install ==="
+          find "$TMPDIR" -type f
+
+          # Build .deb with FPM - use dot to package everything in TMPDIR
           fpm -s dir \
             -t deb \
             -n semtag \
@@ -124,7 +127,7 @@ jobs:
             --license "MIT" \
             --depends "python3" \
             --depends "git" \
-            usr/local/bin usr/local/lib
+            .
 
       - name: Upload .deb to Release
         uses: softprops/action-gh-release@v1
