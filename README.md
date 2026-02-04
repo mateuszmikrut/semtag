@@ -63,6 +63,12 @@ curl -LO "https://github.com/mateuszmikrut/semtag/releases/download/${VERSION}/s
 sudo dpkg -i "semtag-${VERSION}-1_amd64.deb"
 ```
 
+Using .rpm package
+```
+VERSION=$(curl -fsSL https://api.github.com/repos/mateuszmikrut/semtag/releases/latest | grep -o '"tag_name": *"[^"]*' | cut -d'"' -f4 | sed 's/^v//')
+dnf install https://github.com/mateuszmikrut/semtag/releases/download/${VERSION}/semtag-${VERSION}-1.x86_64.rpm
+```
+
 From source
 ```bash
 git clone https://github.com/mateuszmikrut/semtag.git
