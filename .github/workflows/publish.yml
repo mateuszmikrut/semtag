@@ -5,8 +5,10 @@ on:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
       - '[0-9]+.[0-9]+.[0-9]+'
-    tags-ignore:
-      - '**-*'
+    # tags-ignore:
+    #   - '**-*'
+    # branches-ignore:
+    #   - '**'
 
 jobs:
   build:
