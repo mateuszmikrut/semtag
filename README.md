@@ -49,13 +49,21 @@ Using pip  (preferred)
 pip install semtag
 ```
 
-Using Homebrew
+Using Homebrew (Mac)
 
 ```bash
 brew install mateuszmikrut/tap/semtag
 ```
 
-From git
+Using .deb package
+
+```
+VERSION=$(curl -fsSL https://api.github.com/repos/mateuszmikrut/semtag/releases/latest | grep -o '"tag_name": *"[^"]*' | cut -d'"' -f4 | sed 's/^v//')
+curl -LO "https://github.com/mateuszmikrut/semtag/releases/download/${VERSION}/semtag-${VERSION}-1_amd64.deb"
+sudo dpkg -i "semtag-${VERSION}-1_amd64.deb"
+```
+
+From source
 ```bash
 git clone https://github.com/mateuszmikrut/semtag.git
 cd semtag
