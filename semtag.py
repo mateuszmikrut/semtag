@@ -25,17 +25,21 @@ def main():
   # parser.add_argument('-f', '--force', action='store_true', default=False, help='Force the operation even if not on main/master branch')
   parser.add_argument('-b', '--by', action='store', type=int, default=1, help='Increment by a specific number')
   
-  version_group = parser.add_mutually_exclusive_group(required=True)
+  version_group = parser.add_mutually_exclusive_group(required=False)
   version_group.add_argument('-p', '--patch', action='store_true', help='Increment patch version (x.x.PATCH)')
   version_group.add_argument('-m', '--minor', action='store_true', help='Increment minor version (x.MINOR.0)')
   version_group.add_argument('-M', '--major', action='store_true', help='Increment major version (MAJOR.0.0)')
   
-  parser.add_argument('-l', '--label', type=str, default=None, help='Add label to the version (e.g., -l rc1 creates 1.0.0-rc1)')
+  parser.add_argument('-l', '--label', type=str, default=None, help='Add label to the version (e.g., -l rc1 creates 1.0.0-rc1). Used alone, adds label to current version')
   parser.add_argument('-a', '--msg', type=str, help='Annotated tags message', default=None)
   parser.add_argument('-u', '--push', action='store_true', help='Push the new tag to remote repository', default=False)
   parser.add_argument('-U', '--pushall', action='store_true', help='Push all local tags to remote repository', default=False)
   parser.add_argument('-n', '--no-fetch', action='store_true', help='Do not fetch tags from remote before operation', default=False)
   args = parser.parse_args()
+  
+  # Validate: must specify at least one of -p/-m/-M or -l (due to group not required)
+  if not any([args.patch, args.minor, args.major, args.label]):
+    parser.error('Must specify at least one of: -p/--patch, -m/--minor, -M/--major, or -l/--label')
   
   ### Logging based on verbosity 
   if args.verbose == 0:
@@ -111,6 +115,9 @@ def main():
   elif args.patch:
     logger.debug("Incrementing patch version")
     current_version.inc_patch(by=args.by)
+  else:
+    # labeling current version
+    logger.debug("Adding label to current version without incrementing")
   
   ### Label 
   if args.label:
