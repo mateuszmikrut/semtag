@@ -106,11 +106,21 @@ jobs:
           VERSION="${GITHUB_REF_NAME#v}"
           TMPDIR=$(mktemp -d)
 
-          pip install --prefix="$TMPDIR/usr" dist/semtag*.whl
+          # Install into version-agnostic site-packages
+          TARGET_SITE="$TMPDIR/usr/lib/python3/dist-packages"
+          mkdir -p "$TARGET_SITE" "$TMPDIR/usr/bin"
+          python3 -m pip install --target "$TARGET_SITE" dist/semtag*.whl
 
-          if [ -d "$TMPDIR/usr/bin" ]; then
-            chmod +x "$TMPDIR/usr/bin"/*
-          fi
+          # Wrapper script to ensure module path is found
+          cat > "$TMPDIR/usr/bin/semtag" <<'EOF'
+          #!/usr/bin/env python3
+          import sys
+          sys.path.insert(0, "/usr/lib/python3/dist-packages")
+          from semtag import main
+          if __name__ == '__main__':
+              main()
+          EOF
+          chmod +x "$TMPDIR/usr/bin/semtag"
 
           # Build .deb with FPM - use dot to package everything in TMPDIR
           fpm -s dir \
