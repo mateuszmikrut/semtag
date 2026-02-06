@@ -236,3 +236,62 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git commit -am "Update semtag to ${GITHUB_REF_NAME}"
           git push
+
+  update-readme:
+    name: Update README with new version
+    runs-on: ubuntu-latest
+    needs:
+      - publish-github
+      - publish-deb
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Update version in README
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+
+          # Update DEB section
+          awk -v version="$VERSION" '
+            /<!-- VERSION:DEB:START -->/ { print; in_deb=1; next }
+            /<!-- VERSION:DEB:END -->/ {
+              print "```bash"
+              print "VERSION=\"" version "\""
+              print "curl -LO \"https://github.com/mateuszmikrut/semtag/releases/download/${VERSION}/semtag-${VERSION}-1_amd64.deb\""
+              print "sudo dpkg -i \"semtag-${VERSION}-1_amd64.deb\""
+              print "```"
+              print
+              in_deb=0
+              next
+            }
+            /<!-- VERSION:RPM:START -->/ { print; in_rpm=1; next }
+            /<!-- VERSION:RPM:END -->/ {
+              print "```bash"
+              print "VERSION=\"" version "\""
+              print "sudo dnf install https://github.com/mateuszmikrut/semtag/releases/download/${VERSION}/semtag-${VERSION}-1.x86_64.rpm"
+              print "```"
+              print
+              in_rpm=0
+              next
+            }
+            !in_deb && !in_rpm
+          ' README.md > README.tmp
+          mv README.tmp README.md
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet README.md; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git add README.md
+          git commit -m "docs: update version to ${GITHUB_REF_NAME} in installation instructions"
+          git push

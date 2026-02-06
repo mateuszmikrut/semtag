@@ -43,46 +43,4 @@ if git diff --cached --name-only | grep -q semtag.py; then
   fi
 fi
 
-# Update version in README.md installation instructions
-echo "Updating version in README.md..."
-LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null | sed 's/^v//')
-if [ -n "$LATEST_TAG" ]; then
-  README_TMP=$(mktemp)
-  
-  # Update DEB section
-  awk -v version="$LATEST_TAG" '
-    /<!-- VERSION:DEB:START -->/ { print; in_deb=1; next }
-    /<!-- VERSION:DEB:END -->/ { 
-      print "```bash"
-      print "VERSION=\"" version "\""
-      print "curl -LO \"https://github.com/mateuszmikrut/semtag/releases/download/${VERSION}/semtag-${VERSION}-1_amd64.deb\""
-      print "sudo dpkg -i \"semtag-${VERSION}-1_amd64.deb\""
-      print "```"
-      print
-      in_deb=0
-      next
-    }
-    /<!-- VERSION:RPM:START -->/ { print; in_rpm=1; next }
-    /<!-- VERSION:RPM:END -->/ {
-      print "```bash"
-      print "VERSION=\"" version "\""
-      print "sudo dnf install https://github.com/mateuszmikrut/semtag/releases/download/${VERSION}/semtag-${VERSION}-1.x86_64.rpm"
-      print "```"
-      print
-      in_rpm=0
-      next
-    }
-    !in_deb && !in_rpm
-  ' README.md > "$README_TMP"
-  
-  if [ $? -eq 0 ]; then
-    mv "$README_TMP" README.md
-    git add README.md
-    echo "README.md version updated to $LATEST_TAG and staged"
-  else
-    echo "Failed to update README.md version"
-    rm -f "$README_TMP"
-  fi
-fi
-
 exit 0
