@@ -58,16 +58,26 @@ brew install mateuszmikrut/tap/semtag
 
 Using .deb package
 
-```
-VERSION=$(curl -fsSL https://api.github.com/repos/mateuszmikrut/semtag/releases/latest | grep -o '"tag_name": *"[^"]*' | cut -d'"' -f4 | sed 's/^v//')
+```bash
+# Latest version
+curl -LO "https://github.com/mateuszmikrut/semtag/releases/latest/download/semtag-latest-1_amd64.deb"
+sudo dpkg -i semtag-latest-1_amd64.deb
+
+# Specific version
+VERSION="1.0.0"  # Replace with desired version
 curl -LO "https://github.com/mateuszmikrut/semtag/releases/download/${VERSION}/semtag-${VERSION}-1_amd64.deb"
 sudo dpkg -i "semtag-${VERSION}-1_amd64.deb"
 ```
 
 Using .rpm package
-```
-VERSION=$(curl -fsSL https://api.github.com/repos/mateuszmikrut/semtag/releases/latest | grep -o '"tag_name": *"[^"]*' | cut -d'"' -f4 | sed 's/^v//')
-dnf install https://github.com/mateuszmikrut/semtag/releases/download/${VERSION}/semtag-${VERSION}-1.x86_64.rpm
+
+```bash
+# Latest version
+sudo dnf install https://github.com/mateuszmikrut/semtag/releases/latest/download/semtag-latest-1.x86_64.rpm
+
+# Specific version
+VERSION="1.0.0"  # Replace with desired version
+sudo dnf install https://github.com/mateuszmikrut/semtag/releases/download/${VERSION}/semtag-${VERSION}-1.x86_64.rpm
 ```
 
 From source
@@ -92,4 +102,3 @@ The script supports semantic versioning with the following formats:
 - `1.0.0-rc1` (with prerelease label)
 
 When incrementing versions, prerelease labels are automatically removed.
-
