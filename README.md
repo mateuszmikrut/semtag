@@ -1,11 +1,8 @@
 # Semantic Version GIT Tagger
 
-[![Image Build](https://github.com/mateuszmikrut/semtag/actions/workflows/publish.yml/badge.svg
-)](https://github.com/mateuszmikrut/semtag/actions/workflows/publish.yml)
 [![GitHub last commit](https://img.shields.io/github/last-commit/mateuszmikrut/semtag)](https://github.com/mateuszmikrut/semtag/commits)
-[![X Follow](https://img.shields.io/twitter/follow/mateusz_mikrut)](https://x.com/mateusz_mikrut)
+![Latest Tag](https://img.shields.io/github/v/tag/mateuszmikrut/semtag)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/semtag)
-![GitHub Tag](https://img.shields.io/github/v/tag/mateuszmikrut/semtag)
 
 
 A pretty trivial python script to easily manage git tags with semantic versioning (semver.org)  
