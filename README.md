@@ -60,7 +60,7 @@ Using .deb package
 
 <!-- VERSION:DEB:START -->
 ```bash
-VERSION="0.3.2"
+VERSION="0.3.3"
 curl -LO "https://github.com/mateuszmikrut/semtag/releases/download/${VERSION}/semtag-${VERSION}-1_amd64.deb"
 sudo dpkg -i "semtag-${VERSION}-1_amd64.deb"
 ```
@@ -70,7 +70,7 @@ Using .rpm package
 
 <!-- VERSION:RPM:START -->
 ```bash
-VERSION="0.3.2"
+VERSION="0.3.3"
 sudo dnf install https://github.com/mateuszmikrut/semtag/releases/download/${VERSION}/semtag-${VERSION}-1.x86_64.rpm
 ```
 <!-- VERSION:RPM:END -->
