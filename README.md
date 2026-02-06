@@ -80,6 +80,10 @@ pip install -r requirements.txt
 python ./semtag.py
 ```
 
+## Releases
+
+https://github.com/mateuszmikrut/semtag/releases/ 
+
 ## Supported Version Formats
 
 The script supports semantic versioning with the following formats:
