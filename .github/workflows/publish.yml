@@ -77,7 +77,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           generate_release_notes: true
-          make_latest: true
           files: |
             dist/*
 
@@ -151,13 +150,9 @@ jobs:
             --depends "git" \
             .
 
-          cp semtag-${VERSION}-1_amd64.deb semtag-latest-1_amd64.deb
-          cp semtag-${VERSION}-1.x86_64.rpm semtag-latest-1.x86_64.rpm
-
       - name: Upload .deb and .rpm to Release
         uses: softprops/action-gh-release@v1
         with:
-          make_latest: true
           files: |
             semtag-*.deb
             semtag-*.rpm

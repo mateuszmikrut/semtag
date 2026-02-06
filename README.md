@@ -58,27 +58,22 @@ brew install mateuszmikrut/tap/semtag
 
 Using .deb package
 
+<!-- VERSION:DEB:START -->
 ```bash
-# Latest version
-curl -LO "https://github.com/mateuszmikrut/semtag/releases/latest/download/semtag-latest-1_amd64.deb"
-sudo dpkg -i semtag-latest-1_amd64.deb
-
-# Specific version
-VERSION="1.0.0"  # Replace with desired version
+VERSION="0.3.2"
 curl -LO "https://github.com/mateuszmikrut/semtag/releases/download/${VERSION}/semtag-${VERSION}-1_amd64.deb"
 sudo dpkg -i "semtag-${VERSION}-1_amd64.deb"
 ```
+<!-- VERSION:DEB:END -->
 
 Using .rpm package
 
+<!-- VERSION:RPM:START -->
 ```bash
-# Latest version
-sudo dnf install https://github.com/mateuszmikrut/semtag/releases/latest/download/semtag-latest-1.x86_64.rpm
-
-# Specific version
-VERSION="1.0.0"  # Replace with desired version
+VERSION="0.3.2"
 sudo dnf install https://github.com/mateuszmikrut/semtag/releases/download/${VERSION}/semtag-${VERSION}-1.x86_64.rpm
 ```
+<!-- VERSION:RPM:END -->
 
 From source
 ```bash
