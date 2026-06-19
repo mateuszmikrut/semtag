@@ -12,6 +12,13 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
+def print_version(verbose, reponame, tag, operator='->'):
+  if verbose == 0:
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RESET = '\033[0m'
+    print(f"{GREEN}{reponame}{RESET} {operator} {YELLOW}{tag}{RESET}")
+
 def main():
   """ Main function """
   
@@ -29,6 +36,7 @@ def main():
   version_group.add_argument('-p', '--patch', action='store_true', help='Increment patch version (x.x.PATCH)')
   version_group.add_argument('-m', '--minor', action='store_true', help='Increment minor version (x.MINOR.0)')
   version_group.add_argument('-M', '--major', action='store_true', help='Increment major version (MAJOR.0.0)')
+  version_group.add_argument('-s', '--show', action='store_true', help='Show the current semver tag')
   
   parser.add_argument('-l', '--label', type=str, default=None, help='Add label to the version (e.g., -l rc1 creates 1.0.0-rc1). Used alone, adds label to current version')
   parser.add_argument('-a', '--msg', type=str, help='Annotated tags message', default=None)
@@ -38,8 +46,8 @@ def main():
   args = parser.parse_args()
   
   # Validate: must specify at least one of -p/-m/-M or -l (due to group not required)
-  if not any([args.patch, args.minor, args.major, args.label]):
-    parser.error('Must specify at least one of: -p/--patch, -m/--minor, -M/--major, or -l/--label')
+  if not any([args.patch, args.minor, args.major, args.label, args.show]):
+    parser.error('Must specify at least one of: -p/--patch, -m/--minor, -M/--major, -s/--show, or -l/--label')
   
   ### Logging based on verbosity 
   if args.verbose == 0:
@@ -104,6 +112,10 @@ def main():
     logger.info("No semantic version tags found. Starting with 0.0.0")
     
   current_version = SemanticVersion(latest_tag)
+  ### Show only and exit
+  if args.show:
+    print_version(args.verbose, reponame, str(current_version), operator='==')
+    exit(0)
   
   ### Increment version 
   if args.major:
@@ -154,12 +166,8 @@ def main():
   except Exception as e:
     logger.error(f"Error: {e}")  
 
-  ### Print the new tag to stout as confirmation if not verbose
-  if args.verbose == 0:
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RESET = '\033[0m'
-    print(f"{GREEN}{reponame}{RESET} -> {YELLOW}{new_tag}{RESET}")
+  ### Print the new tag
+  print_version(args.verbose, reponame, new_tag)
 
 if __name__ == "__main__":
   main()

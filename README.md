@@ -23,6 +23,7 @@ semtag [options]
   -p, --patch        Increment patch version (x.x.PATCH)
   -m, --minor        Increment minor version (x.MINOR.0)
   -M, --major        Increment major version (MAJOR.0.0)
+  -s, --show         Show the current semver tag
   -l, --label LABEL  Add label to the version (e.g., -l rc1 creates
                      1.0.0-rc1). Used alone, adds label to current version
   -a, --msg MSG      Annotated tags message
